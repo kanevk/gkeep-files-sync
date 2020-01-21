@@ -6,6 +6,7 @@ import keyring
 import time
 import json
 import utils
+import requests
 
 HOME = str(Path.home())
 USERNAME = 'kamen'
@@ -85,7 +86,18 @@ def login(keep):
 
 
 @benchmark
-def sync_with_remote(keep):
+def sync_up(keep):
+    if not check_connection():
+        return
+
+    keep.sync()
+
+
+@benchmark
+def sync_down(keep):
+    if not check_connection():
+        return
+
     keep.sync()
     remote_notes = list(keep.find(labels=[keep.findLabel('autosync')]))
 
@@ -94,6 +106,16 @@ def sync_with_remote(keep):
         local_content = open(path, 'r').read()
         if not hash_equal(local_content, note.text):
             open(path, 'w').write(note.text)
+
+
+def check_connection(host='http://google.com'):
+    try:
+        requests.get(host, timeout=1)
+        print("Internet connection present")
+        return True
+    except requests.exceptions.ConnectionError:
+        print("No internet connection")
+        return False
 
 
 @benchmark
@@ -105,12 +127,12 @@ def run(keep, note_path):
         note = create_note(keep, note_data['title'], note_data['text'])
         #
         print('syncing...')
-        keep.sync()
+        sync_up(keep)
     elif not hash_equal(note.text, note_data['text']):
         note.text = note_data['text']
         #
         print('syncing...')
-        keep.sync()
+        sync_up(keep)
     else:
         print('No changes found.')
 

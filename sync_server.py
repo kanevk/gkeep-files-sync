@@ -37,7 +37,8 @@ if __name__ == "__main__":
     try:
         while True:
             if timer % 60 == 0:
-                sync_note.sync_with_remote(keep)
+                sync_note.sync_down(keep)
+
             time.sleep(1)
             timer += 1
     except KeyboardInterrupt:
