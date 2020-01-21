@@ -9,7 +9,6 @@ import utils
 import requests
 
 HOME = str(Path.home())
-USERNAME = 'kamen'
 CONFIG = json.load(open('.config.json'))
 
 
@@ -71,7 +70,8 @@ def login(keep):
     # keyring.set_password('google-keep-password', USERNAME, master_token)
     if len(open('.state.json', 'r').read()) == 0:
         # login
-        token = keyring.get_password('google-keep-token', USERNAME)
+        token = keyring.get_password('google-keep-token',
+                                     CONFIG['os_username'])
         keep.resume(CONFIG['email'], token)
         #
         # save state
@@ -81,7 +81,8 @@ def login(keep):
     else:
         state_file = open('.state.json', 'r')
         state = json.load(state_file)
-        token = keyring.get_password('google-keep-token', USERNAME)
+        token = keyring.get_password('google-keep-token',
+                                     CONFIG['os_username'])
         keep.resume(CONFIG['email'], token, state=state)
 
 
