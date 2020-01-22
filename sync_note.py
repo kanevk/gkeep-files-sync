@@ -91,7 +91,10 @@ def sync_up(keep):
     if not check_connection():
         return
 
-    keep.sync()
+    try:
+        keep.sync()
+    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+        print("Error during syncing occurred")
 
 
 @benchmark
@@ -99,7 +102,11 @@ def sync_down(keep):
     if not check_connection():
         return
 
-    keep.sync()
+    try:
+        keep.sync()
+    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+        print("Error during syncing occurred")
+
     remote_notes = list(keep.find(labels=[keep.findLabel('autosync')]))
 
     for note in remote_notes:
