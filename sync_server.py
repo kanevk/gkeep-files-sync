@@ -21,15 +21,15 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
-    path = sys.argv[1] if len(sys.argv) > 1 else '.'
-
     keep = sync_note.gkeepapi.Keep()
 
     sync_note.login(keep)
 
+    sync_note.upload_new_notes(keep)
+
     event_handler = EventHandler(keep)
     observer = Observer()
-    observer.schedule(event_handler, path, recursive=True)
+    observer.schedule(event_handler, sync_note.NOTES_ROOT, recursive=True)
     observer.start()
     print("After observer start")
 

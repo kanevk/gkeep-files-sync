@@ -1,5 +1,6 @@
 import gkeepapi
 from pathlib import Path
+from os import path
 import hashlib
 import sys
 import keyring
@@ -8,21 +9,22 @@ import json
 from utils import benchmark
 import requests
 
-HOME = str(Path.home())
 CONFIG = json.load(open('.config.json'))
+NOTES_ROOT = path.expanduser(CONFIG['notes_root'])
+SYNC_LABEL = 'autosync'
 
 
 def create_note(keep, title, text):
     print(f"Creating a note {title}")
     newNote = keep.createNote(title, text)
-    label = keep.findLabel('autosync')
+    label = keep.findLabel(SYNC_LABEL)
     newNote.labels.add(label)
 
     return newNote
 
 
 def find_note(keep, title):
-    label = keep.findLabel('autosync')
+    label = keep.findLabel(SYNC_LABEL)
     gnotes = list(
         keep.find(labels=[label], func=lambda note: note.title == title)
     )
@@ -33,8 +35,10 @@ def find_note(keep, title):
 
 
 def file_to_note_tuple(path):
-    path_after_home = path.replace(HOME, '')
-    title = path_after_home[1:].replace('/', ' ').replace('.md', '')
+    relative_path = path.replace(NOTES_ROOT, '')[1:]
+    title = relative_path.replace('.md', '')
+    print(f"title {title}")
+
     text = open(path, 'r').read()
 
     return {'path': path, 'title': title, 'text': text}
@@ -91,10 +95,11 @@ def sync_down(keep):
     except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
         print("Error during syncing occurred")
 
-    remote_notes = list(keep.find(labels=[keep.findLabel('autosync')]))
+    remote_notes = list(keep.find(labels=[keep.findLabel(SYNC_LABEL)]))
 
     for note in remote_notes:
-        path = f"{HOME}/{note.title.replace(' ', '/')}.md"
+        path = f"{NOTES_ROOT}/{note.title}.md"
+        print(f'File path: {path}')
         local_content = open(path, 'r').read()
         if not hash_equal(local_content, note.text):
             open(path, 'w').write(note.text)
