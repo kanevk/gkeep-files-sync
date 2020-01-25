@@ -5,27 +5,11 @@ import sys
 import keyring
 import time
 import json
-import utils
+from utils import benchmark
 import requests
 
 HOME = str(Path.home())
 CONFIG = json.load(open('.config.json'))
-
-
-def benchmark(func):
-    """
-    A benchmark tool
-    """
-    def function_timer(*args, **kwargs):
-        start = time.time()
-        value = func(*args, **kwargs)
-        end = time.time()
-        runtime = end - start
-        print(
-            f"`{func.__name__}` took {runtime} seconds"
-        )
-        return value
-    return function_timer
 
 
 def create_note(keep, title, text):
@@ -33,7 +17,7 @@ def create_note(keep, title, text):
     newNote = keep.createNote(title, text)
     label = keep.findLabel('autosync')
     newNote.labels.add(label)
-    #
+
     return newNote
 
 
@@ -42,7 +26,7 @@ def find_note(keep, title):
     gnotes = list(
         keep.find(labels=[label], func=lambda note: note.title == title)
     )
-    #
+
     if len(gnotes) > 1:
         raise Exception(f'Too many notes match the title: {title}')
     return (gnotes[0] if len(gnotes) == 1 else None)
@@ -52,14 +36,14 @@ def file_to_note_tuple(path):
     path_after_home = path.replace(HOME, '')
     title = path_after_home[1:].replace('/', ' ').replace('.md', '')
     text = open(path, 'r').read()
-    #
+
     return {'path': path, 'title': title, 'text': text}
 
 
 def hash_equal(text_a, text_b):
     hash_a = hashlib.md5(text_a.encode('utf-8')).hexdigest()
     hash_b = hashlib.md5(text_b.encode('utf-8')).hexdigest()
-    #
+
     return hash_a == hash_b
 
 
@@ -73,7 +57,7 @@ def login(keep):
         token = keyring.get_password('google-keep-token',
                                      CONFIG['os_username'])
         keep.resume(CONFIG['email'], token)
-        #
+
         # save state
         state_file = open('.state.json', 'w')
         state = keep.dump()

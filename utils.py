@@ -1,13 +1,19 @@
 from os import listdir
 from os.path import isfile, join
+import time
 
 
-def traverse_files(path):
-    files = []
-    for f in listdir(path):
-        if isfile(join(path, f)):
-            files.append(join(path, f))
-        else:
-            files += traverse_files(join(path, f))
-    #
-    return files
+def benchmark(func):
+    """
+    A benchmark tool
+    """
+    def function_timer(*args, **kwargs):
+        start = time.time()
+        value = func(*args, **kwargs)
+        end = time.time()
+        runtime = end - start
+        print(
+            f"`{func.__name__}` took {runtime} seconds"
+        )
+        return value
+    return function_timer
