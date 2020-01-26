@@ -95,6 +95,7 @@ def sync_down(keep):
         keep.sync()
     except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
         print("Error during syncing occurred")
+        return
 
     remote_notes = list(keep.find(labels=[keep.findLabel(SYNC_LABEL)]))
 

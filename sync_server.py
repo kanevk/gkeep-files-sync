@@ -5,6 +5,8 @@ from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 import sync_note
 
+SYNC_DOWN_INTERVAL = 60  # seconds
+
 
 class EventHandler(LoggingEventHandler):
     def __init__(self, keep):
@@ -36,7 +38,7 @@ if __name__ == "__main__":
     timer = 0
     try:
         while True:
-            if timer % 60 == 0:
+            if timer % SYNC_DOWN_INTERVAL == 0:
                 sync_note.sync_down(keep)
 
             time.sleep(1)
