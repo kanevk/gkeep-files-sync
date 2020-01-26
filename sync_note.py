@@ -1,6 +1,5 @@
 import gkeepapi
-from pathlib import Path
-from os import path
+import os
 import hashlib
 import sys
 import keyring
@@ -10,7 +9,7 @@ from utils import benchmark, traverse_files
 import requests
 
 CONFIG = json.load(open('.config.json'))
-NOTES_ROOT = path.expanduser(CONFIG['notes_root'])
+NOTES_ROOT = os.path.expanduser(CONFIG['notes_root'])
 SYNC_LABEL = 'autosync'
 FILE_EXTENSION = 'md'
 
@@ -100,11 +99,30 @@ def sync_down(keep):
     remote_notes = list(keep.find(labels=[keep.findLabel(SYNC_LABEL)]))
 
     for note in remote_notes:
+        if not note.title:
+            continue
+
         path = f"{NOTES_ROOT}/{note.title}.{FILE_EXTENSION}"
-        print(f'File path: {path}')
-        local_content = open(path, 'r').read()
-        if not hash_equal(local_content, note.text):
-            open(path, 'w').write(note.text)
+
+        # CREATE
+        if not os.path.exists(path):
+            # When creating/updating a note in the remote it takes a while to write it's title.
+            # While you're writing on the local server a sync down(every N seconds) may be scheduled and
+            # it'll create a file with the current version of the title which will be incomplete.
+            # During the next sync down a new file will be created for the same note with full title.
+            # This is a problem, because the *UPDATE* functionality its based on comparison of titles.
+            #
+            # In order to make it work for *CREATION*, we assume that when the user writes the title of a note,
+            # the content stays empty.
+            if not note.text:
+                continue
+
+            open(path, 'x').close()
+
+        # UPDATE
+        with open(path, 'r+') as file:
+            if not hash_equal(file.read(), note.text):
+                file.write(note.text)
 
 
 @benchmark
