@@ -6,12 +6,13 @@ import sys
 import keyring
 import time
 import json
-from utils import benchmark
+from utils import benchmark, traverse_files
 import requests
 
 CONFIG = json.load(open('.config.json'))
 NOTES_ROOT = path.expanduser(CONFIG['notes_root'])
 SYNC_LABEL = 'autosync'
+FILE_EXTENSION = 'md'
 
 
 def create_note(keep, title, text):
@@ -36,7 +37,7 @@ def find_note(keep, title):
 
 def file_to_note_tuple(path):
     relative_path = path.replace(NOTES_ROOT, '')[1:]
-    title = relative_path.replace('.md', '')
+    title = relative_path.replace(f".{FILE_EXTENSION}", '')
     print(f"title {title}")
 
     text = open(path, 'r').read()
@@ -98,11 +99,35 @@ def sync_down(keep):
     remote_notes = list(keep.find(labels=[keep.findLabel(SYNC_LABEL)]))
 
     for note in remote_notes:
-        path = f"{NOTES_ROOT}/{note.title}.md"
+        path = f"{NOTES_ROOT}/{note.title}.{FILE_EXTENSION}"
         print(f'File path: {path}')
         local_content = open(path, 'r').read()
         if not hash_equal(local_content, note.text):
             open(path, 'w').write(note.text)
+
+
+@benchmark
+def upload_new_notes(keep):
+    all_paths = traverse_files(NOTES_ROOT)
+    file_note_states = list(
+        map(
+            file_to_note_tuple,
+            filter(lambda path: path[-3:] == f".{FILE_EXTENSION}", all_paths)
+        )
+    )
+    new_notes_count = 0
+
+    for file_note_state in file_note_states:
+        if find_note(keep, file_note_state['title']):
+            continue
+
+        new_notes_count += 1
+        create_note(keep, file_note_state['title'], file_note_state['text'])
+
+    print(f"Uploading {new_notes_count} new notes")
+    print('syncing...')
+    # This doesn't use sync_up(keep) because we want to fail if there is network issue
+    keep.sync()
 
 
 def check_connection(host='http://google.com'):
@@ -122,12 +147,12 @@ def run(keep, note_path):
 
     if note is None:
         note = create_note(keep, note_data['title'], note_data['text'])
-        #
+
         print('syncing...')
         sync_up(keep)
     elif not hash_equal(note.text, note_data['text']):
         note.text = note_data['text']
-        #
+
         print('syncing...')
         sync_up(keep)
     else:
