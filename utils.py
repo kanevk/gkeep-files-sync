@@ -21,10 +21,8 @@ def benchmark(func):
     def function_timer(*args, **kwargs):
         start = time.time()
         value = func(*args, **kwargs)
-        end = time.time()
-        runtime = end - start
-        print(
-            f"`{func.__name__}` took {runtime} seconds"
-        )
+
+        print(f"{func.__name__} took {time.time() - start} seconds")
+
         return value
     return function_timer

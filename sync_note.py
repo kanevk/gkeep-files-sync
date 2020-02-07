@@ -1,12 +1,14 @@
-import gkeepapi
 import os
 import hashlib
 import sys
-import keyring
-import time
 import json
-from utils import benchmark, traverse_files
 import requests
+
+import gkeepapi
+import keyring
+
+from utils import benchmark, traverse_files
+
 
 CONFIG = json.load(open('.config.json'))
 NOTES_ROOT = os.path.expanduser(CONFIG['notes_root'])
@@ -25,9 +27,7 @@ def create_note(keep, title, text):
 
 def find_note(keep, title):
     label = keep.findLabel(SYNC_LABEL)
-    gnotes = list(
-        keep.find(labels=[label], func=lambda note: note.title == title)
-    )
+    gnotes = list(keep.find(labels=[label], func=lambda note: note.title == title))
 
     if len(gnotes) > 1:
         raise Exception(f'Too many notes match the title: {title}')
@@ -37,9 +37,10 @@ def find_note(keep, title):
 def file_to_note_tuple(path):
     relative_path = path.replace(NOTES_ROOT, '')[1:]
     title = relative_path.replace(f".{FILE_EXTENSION}", '')
+
     print(f"title {title}")
 
-    text = open(path, 'r').read()
+    with open(path, 'r') as f: text = f.read()
 
     return {'path': path, 'title': title, 'text': text}
 
@@ -128,10 +129,11 @@ def sync_down(keep):
 @benchmark
 def upload_new_notes(keep):
     all_paths = traverse_files(NOTES_ROOT)
+
     file_note_states = list(
         map(
             file_to_note_tuple,
-            filter(lambda path: path[-3:] == f".{FILE_EXTENSION}", all_paths)
+            filter(lambda path: path.endswith(f".{FILE_EXTENSION}"), all_paths)
         )
     )
     new_notes_count = 0
