@@ -112,7 +112,7 @@ def sync_down(keep):
             open(path, 'x').close()
 
         # UPDATE
-        with open(path, 'r+') as file:
+        with open(path, 'w+') as file:
             if not hash_equal(file.read(), note.text):
                 file.write(note.text)
 
