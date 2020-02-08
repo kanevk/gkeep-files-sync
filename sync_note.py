@@ -54,25 +54,16 @@ def hash_equal(text_a, text_b):
 
 @benchmark
 def login(keep):
-    # keep.login(CONFIG['email'], CONFIG['password'])
-    # master_token = keep.getMasterToken()
-    # keyring.set_password('google-keep-password', USERNAME, master_token)
-    if len(open('.state.json', 'r').read()) == 0:
-        # login
-        token = keyring.get_password('google-keep-token',
-                                     CONFIG['os_username'])
-        keep.resume(CONFIG['email'], token)
+    if not os.path.exists('.state.json'):
+        keep.resume(CONFIG['email'], CONFIG['token'])
 
         # save state
-        state_file = open('.state.json', 'w')
-        state = keep.dump()
-        json.dump(state, state_file)
+        with open('.state.json', 'w') as state_file:
+            json.dump(keep.dump(), state_file)
     else:
-        state_file = open('.state.json', 'r')
-        state = json.load(state_file)
-        token = keyring.get_password('google-keep-token',
-                                     CONFIG['os_username'])
-        keep.resume(CONFIG['email'], token, state=state)
+        with open('.state.json', 'r') as state_file:
+            keep.resume(CONFIG['email'], CONFIG['token'],
+                        state=json.load(state_file))
 
 
 @benchmark
@@ -121,7 +112,7 @@ def sync_down(keep):
             open(path, 'x').close()
 
         # UPDATE
-        with open(path, 'r+') as file:
+        with open(path, 'w+') as file:
             if not hash_equal(file.read(), note.text):
                 file.write(note.text)
 
