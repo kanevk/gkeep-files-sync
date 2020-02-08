@@ -1,5 +1,6 @@
 {
   "os_username": "[OS username]",
   "email": "[Google keep login email]",
-  "password": "[Google keep login password]"
+  "password": "[Google keep login password]",
+  "notes_root": "[Path to the root directory of all local notes]"
 }
