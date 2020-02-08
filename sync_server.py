@@ -35,15 +35,12 @@ if __name__ == "__main__":
     observer.start()
     print("After observer start")
 
-    timer = 0
     try:
         while True:
-            if timer % SYNC_DOWN_INTERVAL == 0:
-                sync_note.sync_down(keep)
+            sync_note.sync_down(keep)
 
-            time.sleep(1)
-            timer += 1
+            time.sleep(SYNC_DOWN_INTERVAL)
     except KeyboardInterrupt:
         observer.stop()
-    # Check this out
+
     observer.join()
