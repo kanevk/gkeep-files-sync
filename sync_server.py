@@ -1,9 +1,12 @@
-import sys
 import time
 import logging
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
+
+import gkeepapi
+
 import sync_note
+
 
 SYNC_DOWN_INTERVAL = 60  # seconds
 
@@ -23,7 +26,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
-    keep = sync_note.gkeepapi.Keep()
+    keep = gkeepapi.Keep()
 
     sync_note.login(keep)
 
