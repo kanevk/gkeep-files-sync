@@ -4,9 +4,6 @@ import sys
 import json
 import requests
 
-import gkeepapi
-import keyring
-
 from utils import benchmark, traverse_files
 
 
