@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+
+from gkeep_sync import sync_server
+
+sync_server.start_server()
