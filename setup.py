@@ -20,7 +20,7 @@ setuptools.setup(
         'watchdog',
         'gkeepapi'
     ],
-    download_url='https://github.com/kanevk/gkeep-files-sync/archive/0.0.1-alpha.tar.gz',
+    download_url='https://github.com/kanevk/gkeep-files-sync/archive/0.0.1-beta.tar.gz',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3',
