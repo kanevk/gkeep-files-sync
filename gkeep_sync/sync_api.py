@@ -12,7 +12,7 @@ SYNC_LABEL = 'autosync'
 FILE_EXTENSION = 'md'
 
 
-class GkeepSyncAPI:
+class SyncAPI:
     @staticmethod
     def login():
         keep = gkeepapi.Keep()
@@ -28,7 +28,7 @@ class GkeepSyncAPI:
             with open('.state.json', 'r') as state_file:
                 keep.resume(config['email'], config['token'], state=json.load(state_file))
 
-        return GkeepSyncAPI(keep=keep, config=config)
+        return SyncAPI(keep=keep, config=config)
 
     def __init__(self, keep, config):
         self.keep = keep

@@ -1,8 +1,8 @@
-from . import sync_note, sync_server, generate_config
+from . import sync_api, sync_server, generate_config
 
 
 __all__ = [
-    'sync_note',
+    'sync_api',
     'sync_server',
     'generate_config'
 ]

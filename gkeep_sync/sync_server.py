@@ -3,7 +3,7 @@ import logging
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 
-from .sync_note import GkeepSyncAPI
+from .sync_api import SyncAPI
 
 
 SYNC_DOWN_INTERVAL = 60  # seconds
@@ -25,7 +25,7 @@ def start_server():
                         format='%(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
 
-    sync_api = GkeepSyncAPI.login()
+    sync_api = SyncAPI.login()
     sync_api.upload_new_notes()
 
     observer = Observer()
