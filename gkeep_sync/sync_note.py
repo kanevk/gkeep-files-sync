@@ -31,7 +31,7 @@ class GkeepSyncAPI:
         if len(gnotes) > 1:
             raise Exception(f'Too many notes match the title: {title}')
 
-        return (gnotes[0] if len(gnotes) == 1 else None)
+        return (gnotes[0] if gnotes else None)
 
     def file_to_note_tuple(self, path):
         relative_path = path.replace(self.config['notes_root'], '')[1:]
@@ -39,7 +39,8 @@ class GkeepSyncAPI:
 
         print(f"title {title}")
 
-        with open(path, 'r') as f: text = f.read()
+        with open(path, 'r') as f:
+            text = f.read()
 
         return {'path': path, 'title': title, 'text': text}
 
