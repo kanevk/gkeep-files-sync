@@ -5,7 +5,7 @@ import requests
 
 import gkeepapi
 
-from .utils import benchmark, traverse_files, DEFAULT_CONFIG_PATH
+from .utils import benchmark, traverse_files, DEFAULT_CONFIG_PATH, DUMPED_STATE_PATH
 
 
 SYNC_LABEL = 'autosync'
@@ -18,14 +18,14 @@ class SyncAPI:
         keep = gkeepapi.Keep()
         config = json.load(open(DEFAULT_CONFIG_PATH))
 
-        if not os.path.exists('.state.json'):
+        if not os.path.exists(DUMPED_STATE_PATH):
             keep.resume(config['email'], config['token'])
 
             # save state
-            with open('.state.json', 'w') as state_file:
+            with open(DUMPED_STATE_PATH, 'w') as state_file:
                 json.dump(keep.dump(), state_file)
         else:
-            with open('.state.json', 'r') as state_file:
+            with open(DUMPED_STATE_PATH, 'r') as state_file:
                 keep.resume(config['email'], config['token'], state=json.load(state_file))
 
         return SyncAPI(keep=keep, config=config)
