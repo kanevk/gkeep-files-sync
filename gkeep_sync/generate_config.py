@@ -1,8 +1,8 @@
 import json
 import sys
-from os import path
+from os import path, mkdir
 
-from .utils import DEFAULT_CONFIG_PATH
+from .utils import DEFAULT_CONFIG_PATH, CONFIG_FOLDER_PATH
 
 import gkeepapi
 
@@ -17,6 +17,9 @@ def generate_config():
         "password": sys.argv[2],
         "notes_root": sys.argv[3]
     }
+
+    if not path.exists(CONFIG_FOLDER_PATH):
+        mkdir(CONFIG_FOLDER_PATH, 0o700)  # Grant access to the user only!
 
     if not path.exists(DEFAULT_CONFIG_PATH):
         open(DEFAULT_CONFIG_PATH, 'x').close()
