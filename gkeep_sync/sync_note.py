@@ -16,21 +16,21 @@ class GkeepSyncAPI:
 
         self.config = config
         self.keep = keep
+        self.sync_label = keep.findLabel(SYNC_LABEL)
 
     def create_note(self, title, text):
         print(f"Creating a note {title}")
         newNote = self.keep.createNote(title, text)
-        label = self.keep.findLabel(SYNC_LABEL)
-        newNote.labels.add(label)
+        newNote.labels.add(self.sync_label)
 
         return newNote
 
     def find_note(self, title):
-        label = self.keep.findLabel(SYNC_LABEL)
-        gnotes = list(self.keep.find(labels=[label], func=lambda note: note.title == title))
+        gnotes = list(self.keep.find(labels=[self.sync_label], func=lambda note: note.title == title))
 
         if len(gnotes) > 1:
             raise Exception(f'Too many notes match the title: {title}')
+
         return (gnotes[0] if len(gnotes) == 1 else None)
 
     def file_to_note_tuple(self, path):
@@ -82,7 +82,7 @@ class GkeepSyncAPI:
             print("Error during syncing occurred")
             return
 
-        remote_notes = list(self.keep.find(labels=[self.keep.findLabel(SYNC_LABEL)]))
+        remote_notes = list(self.keep.find(labels=[self.sync_label]))
 
         for note in remote_notes:
             if not note.title:
