@@ -34,7 +34,7 @@ def start_server():
 
     config = _build_config()
 
-    wardan_for_duplicate_servers(config)
+    guard_for_duplicate_servers(config)
 
     sync_api = SyncAPI.login(config)
     sync_api.upload_new_notes()
@@ -54,7 +54,7 @@ def start_server():
     observer.join()
 
 
-def wardan_for_duplicate_servers(config):
+def guard_for_duplicate_servers(config):
     notes_root_id = hashlib.md5(config['notes_root__absolute'].encode('utf-8')).hexdigest()
     lock_file_path = os.path.join(CONFIG_FOLDER_PATH, f".lock-{notes_root_id}")
 
