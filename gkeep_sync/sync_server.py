@@ -5,7 +5,6 @@ import hashlib
 import os
 import atexit
 
-
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 
@@ -32,7 +31,7 @@ def start_server():
                         format='%(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
 
-    config = _build_config()
+    config = build_config()
 
     guard_for_duplicate_servers(config)
 
@@ -70,8 +69,9 @@ def guard_for_duplicate_servers(config):
         open(lock_file_path, 'x').close()
 
 
-def _build_config():
-    config = json.load(open(DEFAULT_CONFIG_PATH))
+def build_config():
+    config_path = os.environ.get('GKEEP_CONFIG_PATH', DEFAULT_CONFIG_PATH)
+    config = json.load(open(config_path))
     config['notes_root__absolute'] = os.path.expanduser(config['notes_root'])
 
     return config
