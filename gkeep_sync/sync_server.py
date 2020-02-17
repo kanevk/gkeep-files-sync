@@ -3,47 +3,45 @@ import logging
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 
-import gkeepapi
-
-import sync_note
+from .sync_api import SyncAPI
 
 
 SYNC_DOWN_INTERVAL = 60  # seconds
 
 
 class EventHandler(LoggingEventHandler):
-    def __init__(self, keep):
-        self._keep = keep
+    def __init__(self, sync_api):
+        self.sync_api = sync_api
 
     def on_modified(self, event):
         super(EventHandler, self).on_modified(event)
-        #
+
         if not event.is_directory:
-            sync_note.run(self._keep, event.src_path)
+            self.sync_api.upsert_note(event.src_path)
 
 
-if __name__ == "__main__":
+def start_server():
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
-    keep = gkeepapi.Keep()
 
-    sync_note.login(keep)
+    sync_api = SyncAPI.login()
+    sync_api.upload_new_notes()
 
-    sync_note.upload_new_notes(keep)
-
-    event_handler = EventHandler(keep)
     observer = Observer()
-    observer.schedule(event_handler, sync_note.NOTES_ROOT, recursive=True)
+    observer.schedule(EventHandler(sync_api), sync_api.notes_root, recursive=True)
     observer.start()
-    print("After observer start")
 
     try:
         while True:
-            sync_note.sync_down(keep)
+            sync_api.sync_down()
 
             time.sleep(SYNC_DOWN_INTERVAL)
     except KeyboardInterrupt:
         observer.stop()
 
     observer.join()
+
+
+if __name__ == "__main__":
+    start_server()

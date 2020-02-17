@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+
+from gkeep_sync import generate_config
+
+generate_config.generate_config()

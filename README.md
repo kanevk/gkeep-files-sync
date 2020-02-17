@@ -1,48 +1,69 @@
 # gkeep-files-sync
 
-- Helps you backup your local file notes
-- Helps you easier access your Google Keep notes through your favorite text editor
+This package provides an access to your Google Keep notes under your local file system.
 
-## Setup
+_Works on >=3.6 Python version._
 
-1. Create a label named `autosync` through the Google Keep UI
+_Not tested under Windows_
 
-2. Clone the repo
+## Boring stuff
+
+1. Go to Google Keep UI and create a label named `autosync`
+2. Create a [Google App password](https://support.google.com/accounts/answer/185833?hl=en)
+   - You'll be asked for a App name and you can choose any, e.g `gkeep-sync`
+   - Remember this password, you'll need it later
+
+## Install
+
+Install the package under your OS user:
+
+```shell
+pip3 install --user gkeep-sync
+```
+
+## Run
+
+Setup the config:
+
+```shell
+gkeep_update_config  "[Google email]" "[Google app password]" "[Notes root directory]"
+```
+
+_For more information about the config options check `.config.example.json`_
+
+Run the server:
+
+```shell
+gkeep_sync
+```
+
+## Repo setup
+
+Clone the repo:
 
 ```shell
 git clone git@github.com:kanevk/gkeep-files-sync.git
 cd gkeep-files-sync
 ```
 
-3. Open virtual environment
+Open virtual environment:
 
 ```shell
 pipenv shell
 ```
 
-4. Install dependencies
+Install dependencies:
 
 ```shell
 pipenv install
 ```
 
-5. Create a local config and fill it down
+Install the package in Develop mode into the virtual env:
 
 ```shell
-cp .config.example.json .config.json
+pip install -e .
 ```
 
-6. Update the config with the master token
+To start the server check the [section above](##Run).
 
-```shell
-python3 generate_token.py
-```
-
-7. Start the server
-
-```shell
-python3 sync_server.py
-```
-
-**Note:** Sometimes Google don't let you use your user password and
-in this case you have to fill `.config.json` field password with newly generated [App password](https://support.google.com/accounts/answer/185833?hl=en)
+**Cheers 🍺**

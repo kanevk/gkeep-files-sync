@@ -1,6 +1,10 @@
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, expanduser
 import time
+
+
+DEFAULT_CONFIG_PATH = join(expanduser("~"), ".gkeep-config.json")
+DUMPED_STATE_PATH = join(expanduser("~"), ".gkeep-state.json")
 
 
 def traverse_files(path):
