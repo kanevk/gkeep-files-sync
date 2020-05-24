@@ -5,7 +5,7 @@ import requests
 
 import gkeepapi
 
-from .utils import benchmark, traverse_files, DEFAULT_CONFIG_PATH, DUMPED_STATE_PATH
+from .utils import benchmark, traverse_files, DUMPED_STATE_PATH
 
 
 SYNC_LABEL = 'autosync'
@@ -14,9 +14,8 @@ FILE_EXTENSION = 'md'
 
 class SyncAPI:
     @staticmethod
-    def login():
+    def login(config):
         keep = gkeepapi.Keep()
-        config = json.load(open(DEFAULT_CONFIG_PATH))
 
         if not os.path.exists(DUMPED_STATE_PATH):
             keep.resume(config['email'], config['token'])
@@ -33,7 +32,7 @@ class SyncAPI:
     def __init__(self, keep, config):
         self.keep = keep
         self.sync_label = keep.findLabel(SYNC_LABEL)
-        self.notes_root = os.path.expanduser(config['notes_root'])
+        self.notes_root = config['notes_root__absolute']
 
     @benchmark
     def upsert_note(self, note_path):

@@ -30,12 +30,15 @@ gkeep_update_config  "[Google email]" "[Google app password]" "[Notes root direc
 ```
 
 _For more information about the config options check `.config.example.json`_
+_Optionally you can provide `GKEEP_CONFIG_PATH` env variable for custom located config file_
 
 Run the server:
 
 ```shell
 gkeep_sync
 ```
+
+_Optionally you can provide `GKEEP_CONFIG_PATH` env variable for custom located config file_
 
 ## Repo setup
 
