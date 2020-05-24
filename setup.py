@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='gkeep-sync',
-    version='0.0.1-beta',
+    version='0.0.1',
     author='Kamen Kanev',
     author_email='kamen.e.kanev@gmail.com',
     license='MIT',
@@ -20,9 +20,8 @@ setuptools.setup(
         'watchdog',
         'gkeepapi'
     ],
-    download_url='https://github.com/kanevk/gkeep-files-sync/archive/0.0.1-beta.tar.gz',
+    download_url='https://github.com/kanevk/gkeep-files-sync/archive/0.0.1.tar.gz',
     classifiers=[
-        'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
         'Operating System :: Unix',
